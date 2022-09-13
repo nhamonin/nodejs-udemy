@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/nhamonin/nodejs-udemy/issues"
   },
+  "type": "module",
   "homepage": "https://github.com/nhamonin/nodejs-udemy#readme"
 }
