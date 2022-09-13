@@ -16,5 +16,8 @@
     "url": "https://github.com/nhamonin/nodejs-udemy/issues"
   },
   "type": "module",
-  "homepage": "https://github.com/nhamonin/nodejs-udemy#readme"
+  "homepage": "https://github.com/nhamonin/nodejs-udemy#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
 }
