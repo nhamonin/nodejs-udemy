@@ -2,8 +2,9 @@
   "name": "nodejs-udemy",
   "version": "1.0.0",
   "description": "Repository for my NodeJs learning from Udemy",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +20,8 @@
   "homepage": "https://github.com/nhamonin/nodejs-udemy#readme",
   "devDependencies": {
     "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
   }
 }
