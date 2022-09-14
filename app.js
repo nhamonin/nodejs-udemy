@@ -1,8 +1,15 @@
-import * as http from 'http'
+import express from 'express';
+import path from 'path';
 
-const server = http.createServer((req, res) => {
-    console.log(req);
-    process.send();
-});
+import { adminRouter } from './routers/admin.js';
+import { usersRouter } from './routers/users.js';
 
-server.listen(3003);
+const app = express();
+
+const __dirname = path.resolve();
+
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(adminRouter);
+app.use(usersRouter);
+
+app.listen(3003);
