@@ -8,15 +8,13 @@ app.set('views', 'views');
 
 import adminData from './routes/admin.js';
 import shopRoutes from './routes/shop.js';
+import notFoundRoute from './routes/404.js';
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
 app.use('/admin', adminData.routes);
 app.use(shopRoutes);
-
-app.use((req, res, next) => {
-    res.status(404).render('404', { pageTitle: 'Page Not Found' });
-});
+app.use(notFoundRoute);
 
 app.listen(3003);
