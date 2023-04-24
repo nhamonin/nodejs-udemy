@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 const app = express();
 
 app.set('view engine', 'pug');
-app.set('views', 'views');
+app.set('views', 'views/pug');
 
 import adminData from './routes/admin.js';
 import shopRoutes from './routes/shop.js';
