@@ -10,15 +10,15 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = async (req, res, next) => {
   const product = new Product(req.body.title);
-  product.save();
+  await product.save();
   res.redirect('/');
 };
 
-exports.getProducts = (req, res, next) => {
+exports.getProducts = async (req, res, next) => {
   res.render('shop', {
-    products: Product.fetchAll(),
+    products: await Product.fetchAll(),
     pageTitle: 'Shop',
     path: '/',
   });
