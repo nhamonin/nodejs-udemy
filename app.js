@@ -1,18 +1,10 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { engine as expressHandlebars } from 'express-handlebars';
 
 const app = express();
 
-app.engine(
-  'handlebars',
-  expressHandlebars({
-    layoutsDir: 'views/handlebars/layouts',
-    defaultLayout: 'main-layout',
-  })
-);
-app.set('view engine', 'handlebars');
-app.set('views', 'views/handlebars');
+app.set('view engine', 'ejs');
+app.set('views', 'views/ejs');
 
 import adminData from './routes/admin.js';
 import shopRoutes from './routes/shop.js';
