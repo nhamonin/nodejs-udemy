@@ -3,18 +3,16 @@ import bodyParser from 'body-parser';
 
 const app = express();
 
-app.set('view engine', 'ejs');
-app.set('views', 'views/ejs');
+app.set('view engine', 'pug');
+app.set('views', 'views');
 
-import adminData from './routes/admin.js';
-import shopRoutes from './routes/shop.js';
-import notFoundRoute from './routes/404.js';
+import mainRoute from './routes/main.js';
+import usersData from './routes/users.js';
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
-app.use('/admin', adminData.routes);
-app.use(shopRoutes);
-app.use(notFoundRoute);
+app.use(mainRoute);
+app.use(usersData.routes);
 
 app.listen(3003);
