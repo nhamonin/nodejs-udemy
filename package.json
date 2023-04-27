@@ -11,6 +11,7 @@
   "author": "nhamonin",
   "license": "ISC",
   "devDependencies": {
+    "@prettier/plugin-pug": "^2.4.2",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8"
   },

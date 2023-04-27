@@ -3,8 +3,11 @@ const path = require('path');
 const rootDir = require('../util/path');
 
 module.exports = class Product {
-  constructor(title) {
+  constructor(title, imageUrl, price, description) {
     this.title = title;
+    this.imageUrl = imageUrl;
+    this.price = price;
+    this.description = description;
   }
 
   static filePath = path.join(rootDir, 'data', 'products.json');
