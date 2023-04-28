@@ -11,5 +11,4 @@ block content
       img(src=product.imageUrl, alt=product.title)
     h2 $#{ product.price }
     p #{ product.description }
-    form(action="/add-to-cart", method="post")
-      button.btn(type="submit") Add to Cart
+    include ../layouts/add-to-cart-form.pug

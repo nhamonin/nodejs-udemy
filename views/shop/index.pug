@@ -17,7 +17,7 @@ block content
               h2.product__price $#{ product.price }
               p.product__description #{ product.description }
             .card__actions
-              a.btn(href=`/products/${product.id}`) Details
-              button.btn Add to Cart
+              include ../layouts/product-details-button.pug
+              include ../layouts/add-to-cart-form.pug
     else
       h1 No Products

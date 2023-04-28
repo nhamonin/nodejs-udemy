@@ -1,1 +1,16 @@
-[{"id":"1","title":"A Book","imageUrl":"http://clipart-library.com/images/rcLxe987i.png","price":"10","description":"Some dummy description"},{"title":"123","imageUrl":"3213213","price":"12313","description":"123213","id":"4170.595619783670301"}]
+[
+  {
+    "title": "test",
+    "imageUrl": "123",
+    "price": 5,
+    "description": "123412412342432414",
+    "id": "7220.2267489262277138"
+  },
+  {
+    "title": "rewsfdsvsdcv",
+    "imageUrl": "gbvxbvcxbx",
+    "price": 10,
+    "description": "vlkhvksdjhfvbksfdlvjc cnx",
+    "id": "3000.2806876634614113"
+  }
+]
