@@ -1,0 +1,15 @@
+extends ../layouts/main-layout.pug
+
+block styles
+  link(rel="stylesheet", href="/css/product.css")
+
+block content
+  main.centered
+    h1 #{ product.title }
+    hr
+    div
+      img(src=product.imageUrl, alt=product.title)
+    h2 $#{ product.price }
+    p #{ product.description }
+    form(action="/add-to-cart", method="post")
+      button.btn(type="submit") Add to Cart

@@ -1,5 +1,13 @@
 const Product = require('../models/product');
 
+exports.getIndex = async (req, res, next) => {
+  res.render('shop/index', {
+    products: await Product.fetchAll(),
+    pageTitle: 'Shop',
+    path: '/',
+  });
+};
+
 exports.getProducts = async (req, res, next) => {
   res.render('shop/products-list', {
     products: await Product.fetchAll(),
@@ -8,11 +16,14 @@ exports.getProducts = async (req, res, next) => {
   });
 };
 
-exports.getIndex = async (req, res, next) => {
-  res.render('shop/index', {
-    products: await Product.fetchAll(),
-    pageTitle: 'Shop',
-    path: '/',
+exports.getProductDetails = async (req, res, next) => {
+  const productId = req.params.productId;
+  const product = await Product.getProductById(productId);
+
+  res.render('shop/product-details', {
+    product,
+    pageTitle: product.title,
+    path: '/products',
   });
 };
 
@@ -30,8 +41,8 @@ exports.getOrders = async (req, res, next) => {
   });
 };
 
-exports.getCheckout = async (req, res, next) => {
-  res.render('/shop/checkout', {
+exports.getCheckout = (req, res, next) => {
+  res.render('shop/checkout', {
     pageTitle: 'Checkout',
     path: '/checkout',
   });

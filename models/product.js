@@ -13,6 +13,7 @@ module.exports = class Product {
   static filePath = path.join(rootDir, 'data', 'products.json');
 
   async save() {
+    this.id = new Date().getMilliseconds().toString() + Math.random().toString();
     const products = await Product.fetchAll();
     products.push(this);
 
@@ -23,4 +24,9 @@ module.exports = class Product {
     const buffer = await fs.promises.readFile(Product.filePath);
     return JSON.parse(buffer.toString());
   }
+
+  static getProductById = async (id) => {
+    const products = await Product.fetchAll();
+    return products.find((product) => product.id === id);
+  };
 };
