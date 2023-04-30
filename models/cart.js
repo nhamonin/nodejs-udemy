@@ -7,20 +7,33 @@ module.exports = class Cart {
 
   static async addProduct(id, productPrice) {
     const cart = await Cart.fetchCart();
-    const existingProductIndex = cart.products.findIndex((product) => product.id === id);
-    const existingProduct = cart.products[existingProductIndex];
+    const updatedCart = { ...cart };
+    const existingProductIndex = updatedCart.products.findIndex((product) => product.id === id);
+    const existingProduct = updatedCart.products[existingProductIndex];
     let updatedProduct;
     if (existingProduct) {
       updatedProduct = { ...existingProduct, quantity: existingProduct.quantity + 1 };
-      cart.products = [...cart.products];
-      cart.products[existingProductIndex] = updatedProduct;
+      updatedCart.products = [...updatedCart.products];
+      updatedCart.products[existingProductIndex] = updatedProduct;
     } else {
       updatedProduct = { id, quantity: 1 };
-      cart.products = [...cart.products, updatedProduct];
+      updatedCart.products = [...updatedCart.products, updatedProduct];
     }
-    cart.totalPrice += productPrice;
+    updatedCart.totalPrice += productPrice;
 
-    await fs.promises.writeFile(Cart.filePath, JSON.stringify(cart));
+    await fs.promises.writeFile(Cart.filePath, JSON.stringify(updatedCart));
+  }
+
+  static async deleteProduct(id, productPrice) {
+    const cart = await Cart.fetchCart();
+    const updatedCart = { ...cart };
+    const updatedProducts = updatedCart.products.filter((product) => product.id !== id);
+    const deletedProduct = updatedCart.products.find((product) => product.id === id);
+    if (!deletedProduct) return;
+    updatedCart.products = updatedProducts;
+    updatedCart.totalPrice -= deletedProduct.quantity * productPrice;
+
+    await fs.promises.writeFile(Cart.filePath, JSON.stringify(updatedCart));
   }
 
   static async fetchCart() {

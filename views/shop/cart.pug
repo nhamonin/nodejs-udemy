@@ -1,1 +1,15 @@
 extends ../layouts/main-layout.pug
+
+block content
+  main
+    if cartProducts.length > 0
+      h1 Cart
+      ul
+        each cartProduct in cartProducts
+          li #{ cartProduct.productData.title } (#{ cartProduct.quantity }) - $#{ cartProduct.productData.price * cartProduct.quantity }
+            form(action="/cart-delete-product", method="post")
+              input(type="hidden", name="productId", value=cartProduct.productData.id)
+              button.btn(type="submit") Delete
+      p Total: $#{ totalPrice }
+    else
+      h1 No Products In Cart!
