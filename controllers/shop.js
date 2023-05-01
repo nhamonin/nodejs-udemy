@@ -2,24 +2,28 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getIndex = async (req, res, next) => {
-  res.render('shop/index', {
-    products: await Product.fetchAll(),
-    pageTitle: 'Shop',
-    path: '/',
+  Product.fetchAll().then(([rows]) => {
+    res.render('shop/index', {
+      products: rows,
+      pageTitle: 'Shop',
+      path: '/',
+    });
   });
 };
 
 exports.getProducts = async (req, res, next) => {
-  res.render('shop/products-list', {
-    products: await Product.fetchAll(),
-    pageTitle: 'All Products',
-    path: '/products',
+  Product.fetchAll().then(([rows]) => {
+    res.render('shop/index', {
+      products: rows,
+      pageTitle: 'All Products',
+      path: '/products',
+    });
   });
 };
 
 exports.getProductDetails = async (req, res, next) => {
   const productId = req.params.productId;
-  const product = await Product.getProductById(productId);
+  const product = await Product.findById(productId);
 
   res.render('shop/product-details', {
     product,
@@ -48,14 +52,14 @@ exports.getCart = async (req, res, next) => {
 
 exports.postCart = async (req, res, next) => {
   const productId = req.body.productId;
-  const product = await Product.getProductById(productId);
+  const product = await Product.findById(productId);
   await Cart.addProduct(productId, product.price);
   res.redirect('/cart');
 };
 
 exports.postCartDeleteProduct = async (req, res, next) => {
   const productId = req.body.productId;
-  const { price } = await Product.getProductById(productId);
+  const { price } = await Product.findById(productId);
   await Cart.deleteProduct(productId, price);
   res.redirect('/cart');
 };

@@ -19,14 +19,20 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
   const product = new Product(null, title, imageUrl, price, description);
-  await product.save();
-  res.redirect('/');
+  product
+    .save()
+    .then(() => {
+      res.redirect('/');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.getEditProduct = async (req, res, next) => {
   const editMode = req.query.edit === 'true';
   const productId = req.params.productId;
-  const product = await Product.getProductById(productId);
+  const product = await Product.findById(productId);
 
   if (!editMode || !product) {
     return res.redirect('/');
@@ -43,7 +49,14 @@ exports.getEditProduct = async (req, res, next) => {
 exports.postEditProduct = async (req, res, next) => {
   const { id, title, imageUrl, price, description } = req.body;
   const product = new Product(id, title, imageUrl, price, description);
-  await product.save();
+  product
+    .save()
+    .then(() => {
+      res.redirect('/');
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   res.redirect('/admin/products');
 };
 
