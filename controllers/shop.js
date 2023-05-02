@@ -36,17 +36,11 @@ exports.getProductDetails = async (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
-  const cart = await Cart.fetchCart();
-  const products = await Product.findAll();
-  const cartProducts = cart.products.map((cartProduct) => {
-    const fullProduct = products.find((product) => product.id === cartProduct.id);
-    return {
-      productData: fullProduct,
-      quantity: cartProduct.quantity,
-    };
-  });
+  const cart = await req.user.getCart();
+  const cartProducts = await cart.getProducts();
+
   res.render('shop/cart', {
-    cartProducts,
+    products: cartProducts,
     totalPrice: cart.totalPrice,
     pageTitle: 'Your Cart',
     path: '/cart',
@@ -54,16 +48,28 @@ exports.getCart = async (req, res, next) => {
 };
 
 exports.postCart = async (req, res, next) => {
-  const productId = req.body.productId;
-  const product = await Product.findByPk(productId);
-  await Cart.addProduct(productId, product.price);
+  const { productId } = req.body;
+  const cart = await req.user.getCart();
+  const cartProduct = await cart.getProducts({ where: { id: productId } });
+
+  if (cartProduct.length > 0) {
+    const product = cartProduct[0];
+    product.cartItem.quantity++;
+    await product.cartItem.save();
+  } else {
+    const product = await Product.findByPk(productId);
+    await cart.addProduct(product, { through: { quantity: 1 } });
+  }
+
   res.redirect('/cart');
 };
 
 exports.postCartDeleteProduct = async (req, res, next) => {
   const productId = req.body.productId;
-  const price = await Product.findByPk(productId, { attributes: ['price'] });
-  await Cart.deleteProduct(productId, price);
+  const cart = await req.user.getCart();
+  const [cartProduct] = await cart.getProducts({ where: { id: productId } });
+  await cartProduct.cartItem.destroy();
+
   res.redirect('/cart');
 };
 
