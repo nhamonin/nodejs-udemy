@@ -19,6 +19,12 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(async (req, res, next) => {
+  const user = await User.findByPk(1);
+  req.user = user;
+  next();
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
