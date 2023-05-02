@@ -38,10 +38,15 @@ exports.getProductDetails = async (req, res, next) => {
 exports.getCart = async (req, res, next) => {
   const cart = await req.user.getCart();
   const cartProducts = await cart.getProducts();
+  const totalPrice = await cart.getProducts().then((products) => {
+    return products.reduce((acc, product) => {
+      return acc + product.price * product.cartItem.quantity;
+    }, 0);
+  });
 
   res.render('shop/cart', {
     products: cartProducts,
-    totalPrice: cart.totalPrice,
+    totalPrice,
     pageTitle: 'Your Cart',
     path: '/cart',
   });
@@ -78,6 +83,20 @@ exports.getOrders = async (req, res, next) => {
     pageTitle: 'Your Orders',
     path: '/orders',
   });
+};
+
+exports.postOrder = async (req, res, next) => {
+  const cart = await req.user.getCart();
+  const cartProducts = await cart.getProducts();
+  const order = await req.user.createOrder();
+  await order.addProducts(
+    cartProducts.map((product) => {
+      product.orderItem = { quantity: product.cartItem.quantity };
+      return product;
+    })
+  );
+  await cart.setProducts(null);
+  res.redirect('/orders');
 };
 
 exports.getCheckout = (req, res, next) => {
