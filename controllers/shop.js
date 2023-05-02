@@ -2,9 +2,9 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getIndex = async (req, res, next) => {
-  Product.fetchAll().then(([rows]) => {
+  Product.findAll().then((products) => {
     res.render('shop/index', {
-      products: rows,
+      products,
       pageTitle: 'Shop',
       path: '/',
     });
@@ -12,9 +12,9 @@ exports.getIndex = async (req, res, next) => {
 };
 
 exports.getProducts = async (req, res, next) => {
-  Product.fetchAll().then(([rows]) => {
+  Product.findAll().then((products) => {
     res.render('shop/index', {
-      products: rows,
+      products,
       pageTitle: 'All Products',
       path: '/products',
     });
@@ -23,7 +23,10 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getProductDetails = async (req, res, next) => {
   const productId = req.params.productId;
-  const product = await Product.findById(productId);
+  const product = await Product.findByPk(productId);
+  if (!product) {
+    return res.redirect('/');
+  }
 
   res.render('shop/product-details', {
     product,
@@ -34,7 +37,7 @@ exports.getProductDetails = async (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   const cart = await Cart.fetchCart();
-  const products = await Product.fetchAll();
+  const products = await Product.findAll();
   const cartProducts = cart.products.map((cartProduct) => {
     const fullProduct = products.find((product) => product.id === cartProduct.id);
     return {
@@ -52,14 +55,14 @@ exports.getCart = async (req, res, next) => {
 
 exports.postCart = async (req, res, next) => {
   const productId = req.body.productId;
-  const product = await Product.findById(productId);
+  const product = await Product.findByPk(productId);
   await Cart.addProduct(productId, product.price);
   res.redirect('/cart');
 };
 
 exports.postCartDeleteProduct = async (req, res, next) => {
   const productId = req.body.productId;
-  const { price } = await Product.findById(productId);
+  const price = await Product.findByPk(productId, { attributes: ['price'] });
   await Cart.deleteProduct(productId, price);
   res.redirect('/cart');
 };

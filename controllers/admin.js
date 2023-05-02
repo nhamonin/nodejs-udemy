@@ -2,7 +2,7 @@ const Product = require('../models/product');
 
 exports.getProducts = async (req, res, next) => {
   res.render('admin/products', {
-    products: await Product.fetchAll(),
+    products: await Product.findAll(),
     pageTitle: 'Admin Products',
     path: '/admin/products',
   });
@@ -18,9 +18,7 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(null, title, imageUrl, price, description);
-  product
-    .save()
+  Product.create({ title, imageUrl, price, description })
     .then(() => {
       res.redirect('/');
     })
@@ -32,7 +30,7 @@ exports.postAddProduct = async (req, res, next) => {
 exports.getEditProduct = async (req, res, next) => {
   const editMode = req.query.edit === 'true';
   const productId = req.params.productId;
-  const product = await Product.findById(productId);
+  const product = await Product.findByPk(productId);
 
   if (!editMode || !product) {
     return res.redirect('/');
@@ -48,7 +46,11 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.postEditProduct = async (req, res, next) => {
   const { id, title, imageUrl, price, description } = req.body;
-  const product = new Product(id, title, imageUrl, price, description);
+  const product = await Product.findByPk(id);
+  product.title = title;
+  product.imageUrl = imageUrl;
+  product.price = price;
+  product.description = description;
   product
     .save()
     .then(() => {
@@ -62,6 +64,7 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.postDeleteProduct = async (req, res, next) => {
   const { productId } = req.body;
-  await Product.deleteById(productId);
+  const product = await Product.findByPk(productId);
+  await product.destroy();
   res.redirect('/admin/products');
 };
