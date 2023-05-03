@@ -12,14 +12,14 @@ block content
             header.card__header
               h1.product__title #{ product.title }
             .card__image
-              img(src=product.imageUrl, alt=product.title)
+              img(src=`/${product.imageUrl}`, alt=product.title)
             .card__content
               h2.product__price $#{ product.price }
               p.product__description #{ product.description }
             .card__actions
-              a.btn(href="/admin/edit-product/" + product.id.toString() + "?edit=true") Edit
+              a.btn(href="/admin/edit-product/" + product._id.toString() + "?edit=true") Edit
               form(action="/admin/delete-product", method="POST")
-                input(type="hidden", name="productId", value=product.id)
+                input(type="hidden", name="productId", value=product._id)
                 button.btn(type="submit") Delete
     else
       h1 No Products

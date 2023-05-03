@@ -1,29 +1,30 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 
 exports.getIndex = async (req, res, next) => {
-  Product.findAll().then((products) => {
-    res.render('shop/index', {
-      products,
-      pageTitle: 'Shop',
-      path: '/',
-    });
+  const products = await Product.fetchAll();
+
+  res.render('shop/index', {
+    products,
+    pageTitle: 'Shop',
+    path: '/',
   });
 };
 
 exports.getProducts = async (req, res, next) => {
-  Product.findAll().then((products) => {
-    res.render('shop/index', {
-      products,
-      pageTitle: 'All Products',
-      path: '/products',
-    });
+  const products = await Product.fetchAll();
+  console.log(products);
+
+  res.render('shop/index', {
+    products,
+    pageTitle: 'All Products',
+    path: '/products',
   });
 };
 
 exports.getProductDetails = async (req, res, next) => {
+  console.log('getProductDetails called');
   const productId = req.params.productId;
-  const product = await Product.findByPk(productId);
+  const product = await Product.findById(productId);
   if (!product) {
     return res.redirect('/');
   }
