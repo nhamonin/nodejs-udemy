@@ -1,1 +1,14 @@
 extends ../layouts/main-layout.pug
+
+block content
+  h1 Orders
+    if orders.length > 0
+      ul
+        each order in orders
+          li
+            h1 # #{ order.id }
+            ul
+              each product in order.products
+                li #{ product.title } - $#{ product.price } x #{ product.orderItem.quantity }
+    else
+      p No orders yet
