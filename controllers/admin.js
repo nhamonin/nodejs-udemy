@@ -20,7 +20,7 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = async (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product({ title, price, imageUrl, description });
+  const product = new Product({ title, price, imageUrl, description, userId: req.user });
   product
     .save()
     .then(() => {
