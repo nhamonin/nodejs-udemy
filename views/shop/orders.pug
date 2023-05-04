@@ -10,9 +10,9 @@ block content
         ul.orders
           each order in orders
             li.orders__item
-              h1 # #{ order._id }
+              h1 # #{ order.id }
               ul.orders__products
-                each product in order.items
-                  li.orders__products-item #{ product.title } - $#{ product.price } x #{ product.quantity }
+                each productItem in order.products
+                  li.orders__products-item #{ productItem.product.title } - $#{ productItem.product.price } x #{ productItem.quantity }
       else
         p No orders yet

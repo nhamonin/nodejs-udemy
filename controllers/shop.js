@@ -72,24 +72,24 @@ exports.postCartDeleteProduct = async (req, res, next) => {
   res.redirect('/cart');
 };
 
-// exports.getOrders = async (req, res, next) => {
-//   const orders = await req.user.getOrders();
+exports.getOrders = async (req, res, next) => {
+  const orders = await req.user.getOrders();
 
-//   res.render('shop/orders', {
-//     orders,
-//     pageTitle: 'Your Orders',
-//     path: '/orders',
-//   });
-// };
+  res.render('shop/orders', {
+    orders,
+    pageTitle: 'Your Orders',
+    path: '/orders',
+  });
+};
 
-// exports.postOrder = async (req, res, next) => {
-//   await req.user.addOrder();
-//   res.redirect('/orders');
-// };
+exports.postOrder = async (req, res, next) => {
+  await req.user.addOrder();
+  res.redirect('/orders');
+};
 
-// exports.getCheckout = (req, res, next) => {
-//   res.render('shop/checkout', {
-//     pageTitle: 'Checkout',
-//     path: '/checkout',
-//   });
-// };
+exports.getCheckout = (req, res, next) => {
+  res.render('shop/checkout', {
+    pageTitle: 'Checkout',
+    path: '/checkout',
+  });
+};
