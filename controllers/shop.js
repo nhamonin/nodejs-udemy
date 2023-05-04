@@ -12,7 +12,6 @@ exports.getIndex = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   const products = await Product.fetchAll();
-  console.log(products);
 
   res.render('shop/index', {
     products,
@@ -22,7 +21,6 @@ exports.getProducts = async (req, res, next) => {
 };
 
 exports.getProductDetails = async (req, res, next) => {
-  console.log('getProductDetails called');
   const productId = req.params.productId;
   const product = await Product.findById(productId);
   if (!product) {
@@ -38,12 +36,10 @@ exports.getProductDetails = async (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   const cart = await req.user.getCart();
-  const cartProducts = await cart.getProducts();
-  const totalPrice = await cart.getProducts().then((products) => {
-    return products.reduce((acc, product) => {
-      return acc + product.price * product.cartItem.quantity;
-    }, 0);
-  });
+  const cartProducts = cart.items;
+  const totalPrice = await cartProducts.reduce((acc, product) => {
+    return acc + +product.price * +product.quantity;
+  }, 0);
 
   res.render('shop/cart', {
     products: cartProducts,
@@ -55,17 +51,9 @@ exports.getCart = async (req, res, next) => {
 
 exports.postCart = async (req, res, next) => {
   const { productId } = req.body;
-  const cart = await req.user.getCart();
-  const cartProduct = await cart.getProducts({ where: { id: productId } });
+  const product = await Product.findById(productId);
 
-  if (cartProduct.length > 0) {
-    const product = cartProduct[0];
-    product.cartItem.quantity++;
-    await product.cartItem.save();
-  } else {
-    const product = await Product.findByPk(productId);
-    await cart.addProduct(product, { through: { quantity: 1 } });
-  }
+  await req.user.addToCart(product);
 
   res.redirect('/cart');
 };

@@ -9,7 +9,7 @@ block content
       h1.centered Cart
       ul.cart__item-list
         each product in products
-          li.cart__item #{ product.title } (#{ product.cartItem.quantity }) - $#{ product.price * product.cartItem.quantity }
+          li.cart__item #{ product.title } (#{ product.quantity }) - $#{ product.price * product.quantity }
             form(action="/cart-delete-product", method="post")
               input(type="hidden", name="productId", value=product._id)
               button.btn.danger(type="submit") Delete
