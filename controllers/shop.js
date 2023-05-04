@@ -1,3 +1,4 @@
+const getDb = require('../util/database').getDb;
 const Product = require('../models/product');
 
 exports.getIndex = async (req, res, next) => {
@@ -35,8 +36,25 @@ exports.getProductDetails = async (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
+  const db = getDb();
   const cart = await req.user.getCart();
   const cartProducts = cart.items;
+  const cartProductsIDs = cartProducts.map((item) => item.productId);
+  const cartProductsInDb = await db
+    .collection('products')
+    .find({ _id: { $in: cartProductsIDs } })
+    .toArray();
+
+  if (cartProducts.length !== cartProductsInDb.length) {
+    const updatedCartItems = cartProducts.filter((item) => {
+      return cartProductsInDb.find((product) => product._id.toString() === item.productId.toString());
+    });
+
+    await db
+      .collection('users')
+      .updateOne({ _id: new ObjectId(req.user._id) }, { $set: { cart: { items: updatedCartItems } } });
+  }
+
   const totalPrice = await cartProducts.reduce((acc, product) => {
     return acc + +product.price * +product.quantity;
   }, 0);
