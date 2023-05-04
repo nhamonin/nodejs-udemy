@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 exports.getProducts = async (req, res, next) => {
-  const products = await Product.fetchAll();
+  const products = await Product.find();
 
   res.render('admin/products', {
     products,
@@ -50,10 +50,15 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.postEditProduct = async (req, res, next) => {
   const { title, imageUrl, price, description, productId } = req.body;
-  const product = new Product(title, price, imageUrl, description);
+  const product = await Product.findById(productId);
+
+  product.title = title;
+  product.imageUrl = imageUrl;
+  product.price = price;
+  product.description = description;
 
   product
-    .updateById(productId)
+    .save()
     .then(() => {
       res.redirect('/admin/products');
     })
@@ -64,6 +69,6 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.postDeleteProduct = async (req, res, next) => {
   const { productId } = req.body;
-  await Product.deleteById(productId);
+  await Product.findByIdAndRemove(productId);
   res.redirect('/admin/products');
 };
