@@ -1,9 +1,9 @@
 const path = require('node:path');
 
 const express = require('express');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-const mongoConnect = require('./util/database').mongoConnect;
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
@@ -29,7 +29,8 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect()
+mongoose
+  .connect('mongodb://localhost:27017/nodejs-udemy', { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => {
     app.listen(3000, () => {
       console.log('App is listening on port 3000');
