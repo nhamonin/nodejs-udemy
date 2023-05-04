@@ -1,5 +1,6 @@
 // const getDb = require('../util/database').getDb;
 const Product = require('../models/product');
+const User = require('../models/user');
 
 exports.getIndex = async (req, res, next) => {
   const products = await Product.find();
@@ -35,53 +36,41 @@ exports.getProductDetails = async (req, res, next) => {
   });
 };
 
-// exports.getCart = async (req, res, next) => {
-//   const db = getDb();
-//   const cart = await req.user.getCart();
-//   const cartProducts = cart.items;
-//   const cartProductsIDs = cartProducts.map((item) => item.productId);
-//   const cartProductsInDb = await db
-//     .collection('products')
-//     .find({ _id: { $in: cartProductsIDs } })
-//     .toArray();
+exports.getCart = (req, res, next) => {
+  const products = req.user.cart.items.map((item) => {
+    return {
+      ...item.productId._doc,
+      quantity: item.quantity,
+    };
+  });
 
-//   if (cartProducts.length !== cartProductsInDb.length) {
-//     const updatedCartItems = cartProducts.filter((item) => {
-//       return cartProductsInDb.find((product) => product._id.toString() === item.productId.toString());
-//     });
+  const totalPrice = products.reduce((acc, product) => {
+    return acc + product.price * product.quantity;
+  }, 0);
 
-//     await db
-//       .collection('users')
-//       .updateOne({ _id: new ObjectId(req.user._id) }, { $set: { cart: { items: updatedCartItems } } });
-//   }
+  res.render('shop/cart', {
+    products: products,
+    totalPrice,
+    pageTitle: 'Your Cart',
+    path: '/cart',
+  });
+};
 
-//   const totalPrice = await cartProducts.reduce((acc, product) => {
-//     return acc + +product.price * +product.quantity;
-//   }, 0);
+exports.postCart = async (req, res, next) => {
+  const { productId } = req.body;
+  const product = await Product.findById(productId);
 
-//   res.render('shop/cart', {
-//     products: cartProducts,
-//     totalPrice,
-//     pageTitle: 'Your Cart',
-//     path: '/cart',
-//   });
-// };
+  await req.user.addToCart(product);
 
-// exports.postCart = async (req, res, next) => {
-//   const { productId } = req.body;
-//   const product = await Product.findById(productId);
+  res.redirect('/cart');
+};
 
-//   await req.user.addToCart(product);
+exports.postCartDeleteProduct = async (req, res, next) => {
+  const productId = req.body.productId;
+  await req.user.deleteItemFromCart(productId);
 
-//   res.redirect('/cart');
-// };
-
-// exports.postCartDeleteProduct = async (req, res, next) => {
-//   const productId = req.body.productId;
-//   await req.user.deleteItemFromCart(productId);
-
-//   res.redirect('/cart');
-// };
+  res.redirect('/cart');
+};
 
 // exports.getOrders = async (req, res, next) => {
 //   const orders = await req.user.getOrders();

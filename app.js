@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(async (req, res, next) => {
-  const user = await User.findById('6453f0f9f1583414281e79a6');
+  const user = await User.findById('6453f0f9f1583414281e79a6').populate('cart.items.productId').exec();
   req.user = user;
   next();
 });
