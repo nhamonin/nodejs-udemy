@@ -1,14 +1,18 @@
 extends ../layouts/main-layout.pug
 
+block styles
+  link(rel="stylesheet", href="/css/orders.css")
+
 block content
-  h1 Orders
-    if orders.length > 0
-      ul
-        each order in orders
-          li
-            h1 # #{ order._id }
-            ul
-              each product in order.items
-                li #{ product.title } - $#{ product.price } x #{ product.quantity }
-    else
-      p No orders yet
+  main
+    h1 Orders
+      if orders.length > 0
+        ul.orders
+          each order in orders
+            li.orders__item
+              h1 # #{ order._id }
+              ul.orders__products
+                each product in order.items
+                  li.orders__products-item #{ product.title } - $#{ product.price } x #{ product.quantity }
+      else
+        p No orders yet
