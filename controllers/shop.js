@@ -66,7 +66,7 @@ exports.postCartDeleteProduct = async (req, res, next) => {
 };
 
 exports.getOrders = async (req, res, next) => {
-  const orders = await req.user.getOrders({ include: ['products'] });
+  const orders = await req.user.getOrders();
 
   res.render('shop/orders', {
     orders,
@@ -76,16 +76,7 @@ exports.getOrders = async (req, res, next) => {
 };
 
 exports.postOrder = async (req, res, next) => {
-  const cart = await req.user.getCart();
-  const cartProducts = await cart.getProducts();
-  const order = await req.user.createOrder();
-  await order.addProducts(
-    cartProducts.map((product) => {
-      product.orderItem = { quantity: product.cartItem.quantity };
-      return product;
-    })
-  );
-  await cart.setProducts(null);
+  await req.user.addOrder();
   res.redirect('/orders');
 };
 
