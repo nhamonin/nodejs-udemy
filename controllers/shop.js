@@ -38,7 +38,7 @@ exports.getProductDetails = async (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  const products = req.session.user.cart.items.map((item) => {
+  const products = req.user.cart.items.map((item) => {
     return {
       ...item.productId._doc,
       quantity: item.quantity,
@@ -62,20 +62,20 @@ exports.postCart = async (req, res, next) => {
   const { productId } = req.body;
   const product = await Product.findById(productId);
 
-  await req.session.user.addToCart(product);
+  await req.user.addToCart(product);
 
   res.redirect('/cart');
 };
 
 exports.postCartDeleteProduct = async (req, res, next) => {
   const productId = req.body.productId;
-  await req.session.user.deleteItemFromCart(productId);
+  await req.user.deleteItemFromCart(productId);
 
   res.redirect('/cart');
 };
 
 exports.getOrders = async (req, res, next) => {
-  const orders = await req.session.user.getOrders();
+  const orders = await req.user.getOrders();
 
   res.render('shop/orders', {
     orders,
@@ -86,7 +86,7 @@ exports.getOrders = async (req, res, next) => {
 };
 
 exports.postOrder = async (req, res, next) => {
-  await req.session.user.addOrder();
+  await req.user.addOrder();
   res.redirect('/orders');
 };
 

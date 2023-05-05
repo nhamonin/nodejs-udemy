@@ -28,6 +28,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'test123', resave: false, saveUninitialized: false, store }));
 
+app.use(async (req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+
+  const user = await User.findById(req.session.user._id).populate('cart.items.productId').exec();
+  req.user = user;
+  next();
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);

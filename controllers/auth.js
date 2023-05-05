@@ -13,7 +13,10 @@ exports.postLogin = async (req, res, next) => {
 
   req.session.isLoggedIn = true;
   req.session.user = user;
-  res.redirect('/');
+  req.session.save((err) => {
+    if (err) console.error(err);
+    res.redirect('/');
+  });
 };
 
 exports.postLogout = async (req, res, next) => {
