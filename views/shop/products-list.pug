@@ -18,6 +18,7 @@ block content
               p.product__description #{ product.description }
             .card__actions
               include ../layouts/product-details-button.pug
-              include ../layouts/add-to-cart-form.pug
+              if (isAuthenticated)
+                include ../layouts/add-to-cart-form.pug
     else
       h1 No Products
