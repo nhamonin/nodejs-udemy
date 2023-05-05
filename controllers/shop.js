@@ -1,6 +1,4 @@
-// const getDb = require('../util/database').getDb;
 const Product = require('../models/product');
-const User = require('../models/user');
 
 exports.getIndex = async (req, res, next) => {
   const products = await Product.find();
