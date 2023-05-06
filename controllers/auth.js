@@ -6,16 +6,23 @@ exports.getLogin = async (req, res, next) => {
   res.render('auth/login', {
     pageTitle: 'Login',
     path: '/login',
+    errorMessage: req.flash('error'),
   });
 };
 
 exports.postLogin = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email }).populate('cart.items.productId').exec();
-  if (!user) return res.redirect('/login');
+  if (!user) {
+    req.flash('error', 'Invalid email or password');
+    return res.redirect('/login');
+  }
 
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.redirect('/login');
+  if (!isMatch) {
+    req.flash('error', 'Invalid email or password');
+    return res.redirect('/login');
+  }
 
   req.session.isLoggedIn = true;
   req.session.user = user;
@@ -37,6 +44,7 @@ exports.getSignup = async (req, res, next) => {
     pageTitle: 'Signup',
     path: '/signup',
     isAuthenticated: false,
+    errorMessage: req.flash('error'),
   });
 };
 
@@ -44,7 +52,10 @@ exports.postSignup = async (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
   const userExist = await User.findOne({ email });
 
-  if (userExist) return res.redirect('/signup');
+  if (userExist) {
+    req.flash('error', 'Email already exist');
+    return res.redirect('/signup');
+  }
 
   const user = new User({
     email,
