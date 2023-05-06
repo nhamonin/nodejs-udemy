@@ -27,7 +27,6 @@ const authRoutes = require('./routes/auth');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'test123', resave: false, saveUninitialized: false, store }));
-
 app.use(async (req, res, next) => {
   if (!req.session.user) {
     return next();
@@ -37,27 +36,15 @@ app.use(async (req, res, next) => {
   req.user = user;
   next();
 });
-
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
-
 app.use(errorController.get404);
 
 mongoose
   .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => {
     app.listen(3000, () => {
-      let user = User.findOne();
-
-      if (!user) {
-        user = new User({
-          name: 'Max',
-          email: 'test@gmail.com',
-        });
-        user.save();
-      }
-
       console.log('App is listening on port 3000');
     });
   })

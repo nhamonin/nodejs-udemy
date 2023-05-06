@@ -35,9 +35,14 @@ exports.getSignup = async (req, res, next) => {
 };
 
 exports.postSignup = async (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+  const userExist = await User.findOne({ email });
+
+  if (userExist) return res.redirect('/signup');
+
   const user = new User({
-    email: req.body.email,
-    password: req.body.password,
+    email,
+    password,
     cart: { items: [] },
   });
 
