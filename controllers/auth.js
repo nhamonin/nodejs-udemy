@@ -25,3 +25,22 @@ exports.postLogout = async (req, res, next) => {
     res.redirect('/');
   });
 };
+
+exports.getSignup = async (req, res, next) => {
+  res.render('auth/signup', {
+    pageTitle: 'Signup',
+    path: '/signup',
+    isAuthenticated: false,
+  });
+};
+
+exports.postSignup = async (req, res, next) => {
+  const user = new User({
+    email: req.body.email,
+    password: req.body.password,
+    cart: { items: [] },
+  });
+
+  await user.save();
+  res.redirect('/login');
+};
