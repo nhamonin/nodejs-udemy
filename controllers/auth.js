@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/user');
 
 exports.getLogin = async (req, res, next) => {
@@ -42,7 +44,7 @@ exports.postSignup = async (req, res, next) => {
 
   const user = new User({
     email,
-    password,
+    password: await bcrypt.hash(password, 12),
     cart: { items: [] },
   });
 
