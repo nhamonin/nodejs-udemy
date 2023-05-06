@@ -64,8 +64,8 @@ userSchema.methods.addOrder = async function () {
       };
     }),
     user: {
+      email: this.email,
       userId: this._id,
-      name: this.name,
     },
   });
   await order.save();
