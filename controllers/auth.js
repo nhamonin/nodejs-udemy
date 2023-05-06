@@ -11,7 +11,12 @@ exports.getLogin = async (req, res, next) => {
 };
 
 exports.postLogin = async (req, res, next) => {
-  const user = await User.findById('6453f0f9f1583414281e79a6').populate('cart.items.productId').exec();
+  const { email, password } = req.body;
+  const user = await User.findOne({ email }).populate('cart.items.productId').exec();
+  if (!user) return res.redirect('/login');
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.redirect('/login');
 
   req.session.isLoggedIn = true;
   req.session.user = user;
