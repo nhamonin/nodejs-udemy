@@ -127,3 +127,51 @@ exports.postReset = async (req, res, next) => {
     });
   });
 };
+
+exports.getNewPassword = async (req, res, next) => {
+  const { token } = req.params;
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    req.flash('error', 'Invalid token');
+    return res.redirect('/reset');
+  }
+
+  res.render('auth/new-password', {
+    pageTitle: 'New Password',
+    path: '/new-password',
+    errorMessage: req.flash('error'),
+    userId: user.id,
+    resetToken: token,
+  });
+};
+
+exports.postSaveNewPassword = async (req, res, next) => {
+  const { userId, resetToken, password, confirmPassword } = req.body;
+
+  const user = await User.findOne({
+    resetToken,
+    resetTokenExpiration: { $gt: Date.now() },
+    _id: userId,
+  });
+
+  if (!user) {
+    req.flash('error', 'Invalid token');
+    return res.redirect('/reset');
+  }
+
+  if (password !== confirmPassword) {
+    req.flash('error', 'Passwords do not match');
+    return res.redirect(`/reset/${resetToken}`);
+  }
+
+  user.password = await bcrypt.hash(password, 12);
+  user.resetToken = null;
+  user.resetTokenExpiration = null;
+  await user.save();
+
+  res.redirect('/login');
+};
