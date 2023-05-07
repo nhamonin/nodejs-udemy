@@ -1,7 +1,9 @@
 const Product = require('../models/product');
 
 exports.getProducts = async (req, res, next) => {
-  const products = await Product.find();
+  const products = await Product.find({
+    userId: req.user._id,
+  });
 
   res.render('admin/products', {
     products,
@@ -52,6 +54,10 @@ exports.postEditProduct = async (req, res, next) => {
   const { title, imageUrl, price, description, productId } = req.body;
   const product = await Product.findById(productId);
 
+  if (product.userId.toString() !== req.user._id.toString()) {
+    return res.redirect('/');
+  }
+
   product.title = title;
   product.imageUrl = imageUrl;
   product.price = price;
@@ -69,6 +75,10 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.postDeleteProduct = async (req, res, next) => {
   const { productId } = req.body;
-  await Product.findByIdAndRemove(productId);
-  res.redirect('/admin/products');
+  const { deletedCount } = await Product.deleteOne({
+    _id: productId,
+    userId: req.user._id,
+  });
+
+  return res.redirect(deletedCount ? '/admin/products' : '/');
 };
