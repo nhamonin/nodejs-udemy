@@ -165,6 +165,20 @@ exports.getNewPassword = async (req, res, next) => {
 
 exports.postSaveNewPassword = async (req, res, next) => {
   const { userId, resetToken, password, confirmPassword } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render(`auth/new-password`, {
+      pageTitle: 'New Password',
+      path: '/new-password',
+      isAuthenticated: false,
+      resetToken,
+      userId,
+      errorMessage: errors.array()[0].msg,
+      oldInput: { password, confirmPassword },
+      validationErrors: errors.array(),
+    });
+  }
 
   const user = await User.findOne({
     resetToken,
