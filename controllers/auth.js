@@ -30,8 +30,8 @@ exports.postLogin = async (req, res, next) => {
 
   if (!errors.isEmpty()) {
     return res.status(422).render('auth/login', {
-      pageTitle: 'Signup',
-      path: '/signup',
+      pageTitle: 'Login',
+      path: '/login',
       isAuthenticated: false,
       errorMessage: errors.array()[0].msg,
     });
