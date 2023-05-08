@@ -25,18 +25,19 @@ exports.getLogin = async (req, res, next) => {
 };
 
 exports.postLogin = async (req, res, next) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email }).populate('cart.items.productId').exec();
-  if (!user) {
-    req.flash('error', 'Invalid email or password');
-    return res.redirect('/login');
+  const { email } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).render('auth/login', {
+      pageTitle: 'Signup',
+      path: '/signup',
+      isAuthenticated: false,
+      errorMessage: errors.array()[0].msg,
+    });
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    req.flash('error', 'Invalid email or password');
-    return res.redirect('/login');
-  }
+  const user = await User.findOne({ email }).populate('cart.items.productId').exec();
 
   req.session.isLoggedIn = true;
   req.session.user = user;
