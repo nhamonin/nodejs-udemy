@@ -35,9 +35,18 @@ app.use(async (req, res, next) => {
     return next();
   }
 
-  const user = await User.findById(req.session.user._id).populate('cart.items.productId').exec();
-  req.user = user;
-  next();
+  try {
+    const user = await User.findById(req.session.user._id).populate('cart.items.productId').exec();
+
+    if (!user) {
+      return next();
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    throw new Error(err);
+  }
 });
 app.use(csrfProtection);
 app.use(flash());
