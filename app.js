@@ -30,6 +30,7 @@ const authRoutes = require('./routes/auth');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'test123', resave: false, saveUninitialized: false, store }));
+app.use(csrfProtection);
 app.use(async (req, res, next) => {
   if (!req.session.user) {
     return next();
@@ -48,7 +49,6 @@ app.use(async (req, res, next) => {
     throw new Error(err);
   }
 });
-app.use(csrfProtection);
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -58,7 +58,12 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.use('/500', errorController.get500);
 app.use(errorController.get404);
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.redirect('/500');
+});
 
 mongoose
   .connect(MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
@@ -68,5 +73,7 @@ mongoose
     });
   })
   .catch((err) => {
-    console.error(err);
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   });

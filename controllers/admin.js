@@ -46,7 +46,9 @@ exports.postAddProduct = async (req, res, next) => {
       res.redirect('/');
     })
     .catch((err) => {
-      console.error(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -102,7 +104,9 @@ exports.postEditProduct = async (req, res, next) => {
       res.redirect('/admin/products');
     })
     .catch((err) => {
-      console.error(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
