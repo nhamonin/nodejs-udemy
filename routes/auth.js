@@ -14,6 +14,7 @@ router.post(
     body('email')
       .isEmail()
       .withMessage('Please enter a valid E-mail.')
+      .normalizeEmail()
       .custom(async (value, { req }) => {
         const user = await User.findOne({ email: value });
         const isMatch = await bcrypt.compare(req.body.password, user?.password || '');
@@ -26,7 +27,8 @@ router.post(
       }),
     body('password', 'Please enter a password with only numbers and text and at least 5 characters.')
       .isLength({ min: 5 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
   ],
   authController.postLogin
 );
@@ -46,14 +48,18 @@ router.post(
         }
 
         return true;
-      }),
+      })
+      .normalizeEmail(),
     body('password', 'Please enter a password with only numbers and text and at least 5 characters.')
       .isLength({ min: 5 })
-      .isAlphanumeric(),
-    body('confirmPassword').custom((value, { req }) => {
-      if (value !== req.body.password) throw new Error('Passwords have to match!');
-      return true;
-    }),
+      .isAlphanumeric()
+      .trim(),
+    body('confirmPassword')
+      .custom((value, { req }) => {
+        if (value !== req.body.password) throw new Error('Passwords have to match!');
+        return true;
+      })
+      .trim(),
   ],
   authController.postSignup
 );
