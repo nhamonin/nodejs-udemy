@@ -157,9 +157,11 @@ exports.getNewPassword = async (req, res, next) => {
   res.render('auth/new-password', {
     pageTitle: 'New Password',
     path: '/new-password',
-    errorMessage: req.flash('error'),
     userId: user.id,
     resetToken: token,
+    errorMessage: req.flash('error'),
+    oldInput: { password: '', confirmPassword: '' },
+    validationErrors: [],
   });
 };
 

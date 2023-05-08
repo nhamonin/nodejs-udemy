@@ -23,6 +23,6 @@
 }
 
 .form-control--invalid input,
-.form-control--invalid label {
+.form-control--invalid textarea {
   border-color: red;
 }
