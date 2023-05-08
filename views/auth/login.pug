@@ -7,10 +7,10 @@ block styles
 block content
   main
     form.login-form(action="/login", method="POST")
-      .form-control
+      .form-control(class=validationErrors.some((e) => e.path === "email") ? "form-control--invalid" : "")
         label(for="email") E-mail
         input#email(type="email", name="email")
-      .form-control
+      .form-control(class=validationErrors.some((e) => e.path === "password") ? "form-control--invalid" : "")
         label(for="password") Password
         input#password(type="password", name="password")
       input(type="hidden", name="_csrf", value=csrfToken)

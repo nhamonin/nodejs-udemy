@@ -21,11 +21,13 @@ exports.getLogin = async (req, res, next) => {
     pageTitle: 'Login',
     path: '/login',
     errorMessage: req.flash('error'),
+    oldInput: { email: '', password: '' },
+    validationErrors: [],
   });
 };
 
 exports.postLogin = async (req, res, next) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -34,6 +36,8 @@ exports.postLogin = async (req, res, next) => {
       path: '/login',
       isAuthenticated: false,
       errorMessage: errors.array()[0].msg,
+      oldInput: { email, password },
+      validationErrors: errors.array(),
     });
   }
 
@@ -60,11 +64,13 @@ exports.getSignup = async (req, res, next) => {
     path: '/signup',
     isAuthenticated: false,
     errorMessage: req.flash('error'),
+    oldInput: { email: '', password: '', confirmPassword: '' },
+    validationErrors: [],
   });
 };
 
 exports.postSignup = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, confirmPassword } = req.body;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -73,6 +79,8 @@ exports.postSignup = async (req, res, next) => {
       path: '/signup',
       isAuthenticated: false,
       errorMessage: errors.array()[0].msg,
+      oldInput: { email, password, confirmPassword },
+      validationErrors: errors.array(),
     });
   }
 

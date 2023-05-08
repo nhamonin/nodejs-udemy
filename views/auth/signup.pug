@@ -7,15 +7,15 @@ block styles
 block content
   main
     form.login-form(action="/signup", method="POST")
-      .form-control
+      .form-control(class=validationErrors.some((e) => e.path === "email") ? "form-control--invalid" : "")
         label(for="email") E-mail
-        input#email(type="email", name="email")
-      .form-control
+        input#email(type="email", name="email", value=oldInput.email, required)
+      .form-control(class=validationErrors.some((e) => e.path === "password") ? "form-control--invalid" : "")
         label(for="password") Password
-        input#password(type="password", name="password")
-      .form-control
+        input#password(type="password", name="password", value=oldInput.password, required)
+      .form-control(class=validationErrors.some((e) => e.path === "confirmPassword") ? "form-control--invalid" : "")
         label(for="confirmPassword") Confirm Password
-        input#password(type="password", name="confirmPassword")
+        input#password(type="password", name="confirmPassword", value=oldInput.confirmPassword, required)
       input(type="hidden", name="_csrf", value=csrfToken)
       if (errorMessage.length > 0)
         .user-message.user-message--error #{ errorMessage }
