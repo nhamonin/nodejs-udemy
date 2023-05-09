@@ -1,3 +1,6 @@
+const fs = require('node:fs');
+const path = require('node:path');
+
 const Product = require('../models/product');
 
 exports.getIndex = async (req, res, next) => {
@@ -91,4 +94,22 @@ exports.getCheckout = (req, res, next) => {
     pageTitle: 'Checkout',
     path: '/checkout',
   });
+};
+
+exports.getInvoice = async (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = `invoice-${orderId}.pdf`;
+  const invoicePath = path.join('data', 'invoices', invoiceName);
+  const order = await req.user.getOrderByID(orderId);
+
+  if (!order) {
+    return next(new Error('No order found.'));
+  }
+
+  const pdfDoc = fs.createReadStream(invoicePath);
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
+
+  pdfDoc.pipe(res);
 };

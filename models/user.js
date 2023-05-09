@@ -80,4 +80,8 @@ userSchema.methods.getOrders = async function () {
   return Order.find({ 'user.userId': this._id });
 };
 
+userSchema.methods.getOrderByID = async function (orderId) {
+  return Order.findOne({ _id: orderId, 'user.userId': this._id });
+};
+
 module.exports = mongoose.model('User', userSchema);
