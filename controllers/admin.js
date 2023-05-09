@@ -128,14 +128,18 @@ exports.postEditProduct = async (req, res, next) => {
     });
 };
 
-exports.postDeleteProduct = async (req, res, next) => {
-  const { productId } = req.body;
-  const product = await Product.findById(productId);
-  deleteFile(product.imageUrl);
-  const { deletedCount } = await Product.deleteOne({
-    _id: productId,
-    userId: req.user._id,
-  });
+exports.deleteProduct = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+    deleteFile(product.imageUrl);
+    const { deletedCount } = await Product.deleteOne({
+      _id: productId,
+      userId: req.user._id,
+    });
 
-  return res.redirect(deletedCount ? '/admin/products' : '/');
+    return res.status(200).json({ message: 'Success!', deletedCount });
+  } catch (err) {
+    return res.status(500).json({ message: 'Deleting product failed.' });
+  }
 };
