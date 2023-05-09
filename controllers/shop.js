@@ -1,6 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const pdfDocument = require('pdfkit');
+
 const Product = require('../models/product');
 
 exports.getIndex = async (req, res, next) => {
@@ -106,7 +108,33 @@ exports.getInvoice = async (req, res, next) => {
     return next(new Error('No order found.'));
   }
 
-  const pdfDoc = fs.createReadStream(invoicePath);
+  const pdfDoc = new pdfDocument();
+  pdfDoc.pipe(fs.createWriteStream(invoicePath));
+
+  pdfDoc.fontSize(26).text('Invoice', {
+    underline: true,
+  });
+
+  pdfDoc.text('-----------------------');
+  pdfDoc.fontSize(14).text('Order ID: ' + order._id);
+  pdfDoc.text('-----------------------');
+  pdfDoc.fontSize(16).text('Products:');
+  pdfDoc.text('-----------------------');
+  pdfDoc.fontSize(14).text(
+    order.products
+      .map((product) => {
+        return `${product.product.title} - ${product.quantity} x $${product.product.price}`;
+      })
+      .join('\n')
+  );
+  pdfDoc.text('-----------------------');
+  pdfDoc.fontSize(16).text(
+    'Total Price: $' +
+      order.products.reduce((acc, product) => {
+        return acc + product.quantity * product.product.price;
+      }, 0)
+  );
+  pdfDoc.end();
 
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `inline; filename=${invoiceName}`);
