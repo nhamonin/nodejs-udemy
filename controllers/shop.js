@@ -1,8 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+require('dotenv').config();
 const pdfDocument = require('pdfkit');
-
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 const Product = require('../models/product');
 
 const ITEMS_PER_PAGE = 2;
@@ -110,16 +111,48 @@ exports.getOrders = async (req, res, next) => {
   });
 };
 
+exports.getCheckout = async (req, res, next) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    mode: 'payment',
+    line_items: req.user.cart.items.map((item) => {
+      return {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.productId.title,
+          },
+          unit_amount: item.productId.price * 100,
+        },
+        quantity: item.quantity,
+      };
+    }),
+    success_url: `${req.protocol}://${req.get('host')}/orders`,
+    cancel_url: `${req.protocol}://${req.get('host')}/checkout`,
+  });
+  const products = req.user.cart.items.map((item) => {
+    return {
+      ...item.productId._doc,
+      quantity: item.quantity,
+    };
+  });
+
+  const totalPrice = products.reduce((acc, product) => {
+    return acc + product.price * product.quantity;
+  }, 0);
+
+  res.render('shop/checkout', {
+    products: products,
+    totalPrice,
+    pageTitle: 'Checkout',
+    path: '/checkout',
+    sessionId: session.id,
+  });
+};
+
 exports.postOrder = async (req, res, next) => {
   await req.user.addOrder();
   res.redirect('/orders');
-};
-
-exports.getCheckout = (req, res, next) => {
-  res.render('shop/checkout', {
-    pageTitle: 'Checkout',
-    path: '/checkout',
-  });
 };
 
 exports.getInvoice = async (req, res, next) => {

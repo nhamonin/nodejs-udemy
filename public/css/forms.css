@@ -1,3 +1,8 @@
+.checkout-form {
+  width: 50%;
+  display: block;
+}
+
 .form-control {
   margin: 1rem 0;
 }

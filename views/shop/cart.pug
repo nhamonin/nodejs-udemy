@@ -16,8 +16,6 @@ block content
               button.btn.danger(type="submit") Delete
       p.centered Total: $#{ totalPrice }
       .centered
-        form(action="/create-order", method="post")
-          input(type="hidden", name="_csrf", value=csrfToken)
-          button.btn(type="submit") Order Now
+        a.btn(href="/checkout") Checkout
     else
       h1 No Products In Cart!

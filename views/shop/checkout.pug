@@ -1,1 +1,22 @@
 extends ../layouts/main-layout.pug
+
+block styles
+  link(rel="stylesheet", href="/css/cart.css")
+  link(rel="stylesheet", href="/css/forms.css")
+
+block content
+  main
+    h1 Checkout
+    if products.length > 0
+      h1.centered Cart
+      ul.cart__item-list
+        each product in products
+          li.cart__item #{ product.title } (#{ product.quantity }) - $#{ product.price * product.quantity }
+            form(action="/cart-delete-product", method="post")
+              input(type="hidden", name="productId", value=product._id)
+              input(type="hidden", name="_csrf", value=csrfToken)
+      p.centered Total: $#{ totalPrice }
+    .centered
+      button#order-btn.btn(type="submit", data-session-id=sessionId) Order
+      script(src="https://js.stripe.com/v3/")
+      script(src="/js/checkout.js")
