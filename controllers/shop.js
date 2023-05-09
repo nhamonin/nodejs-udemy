@@ -5,21 +5,45 @@ const pdfDocument = require('pdfkit');
 
 const Product = require('../models/product');
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getIndex = async (req, res, next) => {
-  const products = await Product.find();
+  const page = +req.query.page || 1;
+  const totalProducts = await Product.find().countDocuments();
+  const products = await Product.find()
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE);
 
   res.render('shop/index', {
     products,
+    totalProducts,
+    hasNextPage: ITEMS_PER_PAGE * page < totalProducts,
+    hasPreviousPage: page > 1,
+    nextPage: page + 1,
+    currentPage: page,
+    previousPage: page - 1,
+    lastPage: Math.ceil(totalProducts / ITEMS_PER_PAGE),
     pageTitle: 'Shop',
     path: '/',
   });
 };
 
 exports.getProducts = async (req, res, next) => {
-  const products = await Product.find();
+  const page = +req.query.page || 1;
+  const totalProducts = await Product.find().countDocuments();
+  const products = await Product.find()
+    .skip((page - 1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE);
 
   res.render('shop/index', {
     products,
+    totalProducts,
+    hasNextPage: ITEMS_PER_PAGE * page < totalProducts,
+    hasPreviousPage: page > 1,
+    nextPage: page + 1,
+    currentPage: page,
+    previousPage: page - 1,
+    lastPage: Math.ceil(totalProducts / ITEMS_PER_PAGE),
     pageTitle: 'All Products',
     path: '/products',
   });
