@@ -6,13 +6,20 @@ block styles
 
 block content
   main
-    form.product-form(action="/admin/" + (editing ? "edit" : "add") + "-product", method="POST")
+    form.product-form(
+      action="/admin/" + (editing ? "edit" : "add") + "-product",
+      method="POST",
+      enctype="multipart/form-data"
+    )
       .form-control(class=validationErrors.some((e) => e.path === "title") ? "form-control--invalid" : "")
         label(for="title") Title
         input#title(type="text", name="title", value=oldInput.title || (editing ? product.title : ""))
-      .form-control(class=validationErrors.some((e) => e.path === "imageUrl") ? "form-control--invalid" : "")
-        label(for="imageUrl") Image URL
-        input#imageUrl(type="text", name="imageUrl", value=oldInput.imageUrl || (editing ? product.imageUrl : ""))
+      //- .form-control(class=validationErrors.some((e) => e.path === "imageUrl") ? "form-control--invalid" : "")
+      //-   label(for="imageUrl") Image URL
+      //-   input#imageUrl(type="text", name="imageUrl", value=oldInput.imageUrl || (editing ? product.imageUrl : ""))
+      .form-control
+        label(for="image") Image
+        input#image(type="file", name="image")
       .form-control(class=validationErrors.some((e) => e.path === "price") ? "form-control--invalid" : "")
         label(for="price") Price
         input#price(type="number", name="price", step="0.01", value=oldInput.price || (editing ? product.price : ""))
